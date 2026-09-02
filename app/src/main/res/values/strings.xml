@@ -1,0 +1,11 @@
+<resources>
+    <!-- Existing strings -->
+
+    <string name="outfit_image_desc">Outfit image</string>
+    <string name="expand_icon_desc">Expand details</string>
+    <string name="event_title">Event Title</string>
+    <string name="location_text">Location</string>
+    <string name="outfit_details">Outfit Details</string>
+    <string name="outfit_tags">#Casual #Summer #Chic</string>
+    <string name="outfit_notes">Perfect for a warm afternoon outing. Light fabric and comfortable shoes.</string>
+</resources>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/style_cream">
+
+    <!-- Decorative Clothes Stickers (Background) -->
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/blue_shirt"
+        android:rotation="-15"
+        android:alpha="0.1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/style_chocolate" />
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="-20dp"
+        android:src="@drawable/dress"
+        android:rotation="20"
+        android:alpha="0.1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/style_tan" />
+
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginBottom="100dp"
+        android:layout_marginStart="-10dp"
+        android:src="@drawable/blue_shirt"
+        android:rotation="10"
+        android:alpha="0.1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/style_brown" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="250dp"
+        android:layout_marginEnd="40dp"
+        android:src="@drawable/dress"
+        android:rotation="-25"
+        android:alpha="0.1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/style_chocolate" />
+
+    <!-- Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Logo -->
+        <TextView
+            android:id="@+id/appLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/hello_christmas"
+            android:text="StyleSwipe"
+            android:textColor="@color/style_dark_brown"
+            android:textSize="72sp"
+            android:textStyle="bold" />
+
+        <!-- Tagline -->
+        <TextView
+            android:id="@+id/tagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="One Swipe, Infinite Style"
+            android:textColor="@color/style_chocolate"
+            android:textSize="18sp"
+            android:letterSpacing="0.05"/>
+
+        <!-- Login Button -->
+        <Button
+            android:id="@+id/loginBtn"
+            android:layout_width="240dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/rounded_button"
+            android:fontFamily="@font/arena_rvwak"
+            android:text="Login"
+            android:textColor="@color/style_cream"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Sign Up Button -->
+        <Button
+            android:id="@+id/signupBtn"
+            android:layout_width="240dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_button2"
+            android:fontFamily="@font/arena_rvwak"
+            android:text="Sign Up"
+            android:textColor="@color/style_dark_brown"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/skipBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Skip for now"
+            android:fontFamily="@font/arena_rvwak"
+            android:background="?attr/selectableItemBackground"
+            android:textColor="@color/style_brown"
+            android:textSize="14sp"
+            android:textAllCaps="true"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

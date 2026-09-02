@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/style_cream">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_custom"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <!-- Background Stickers -->
+            <ImageView
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginTop="200dp"
+                android:layout_marginEnd="-40dp"
+                android:src="@drawable/blue_shirt"
+                android:rotation="-20"
+                android:alpha="0.05"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:tint="@color/style_chocolate" />
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="450dp"
+                android:layout_marginStart="-20dp"
+                android:src="@drawable/dress"
+                android:rotation="15"
+                android:alpha="0.05"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/style_tan" />
+
+            <!-- Header -->
+            <TextView
+                android:id="@+id/captureHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/arena_rvwak"
+                android:text="New Outfit"
+                android:textColor="@color/style_dark_brown"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Image Preview Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/outfitImageCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/style_light_peachy"
+                app:layout_constraintTop_toBottomOf="@id/captureHeader"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/outfitImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:minHeight="280dp"
+                    android:scaleType="fitCenter"
+                    android:background="@color/style_light_peachy"
+                    android:src="@drawable/rounded_button"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Action Buttons -->
+            <Button
+                android:id="@+id/captureBtn"
+                android:layout_width="140dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rounded_button"
+                android:fontFamily="@font/arena_rvwak"
+                android:text="Capture"
+                android:textColor="@color/style_cream"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/outfitImageCard" />
+
+            <Button
+                android:id="@+id/uploadBtn"
+                android:layout_width="140dp"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rounded_button2"
+                android:fontFamily="@font/arena_rvwak"
+                android:text="Upload"
+                android:textColor="@color/style_dark_brown"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/outfitImageCard" />
+
+            <!-- Input Fields -->
+            <EditText
+                android:id="@+id/eventField"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/edittext_bg"
+                android:hint="Event/Occasion"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/style_dark_brown"
+                android:textColorHint="@color/style_tan"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/captureBtn" />
+
+            <EditText
+                android:id="@+id/locationField"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edittext_bg"
+                android:hint="Location"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/style_dark_brown"
+                android:textColorHint="@color/style_tan"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/eventField" />
+
+            <EditText
+                android:id="@+id/tagsField"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edittext_bg"
+                android:hint="Tags"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/style_dark_brown"
+                android:textColorHint="@color/style_tan"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/locationField" />
+
+            <EditText
+                android:id="@+id/notesField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="100dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edittext_bg"
+                android:gravity="top"
+                android:hint="Notes"
+                android:padding="20dp"
+                android:textColor="@color/style_dark_brown"
+                android:textColorHint="@color/style_tan"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tagsField" />
+
+            <!-- Footer Actions -->
+            <Button
+                android:id="@+id/saveBtn"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="40dp"
+                android:background="@drawable/rounded_button"
+                android:fontFamily="@font/arena_rvwak"
+                android:text="Save Outfit"
+                android:textColor="@color/style_cream"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/notesField" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <!-- Custom Arched Bottom Navigation -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_nav_custom"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/bottom_arc_bg"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageButton
+            android:id="@+id/nav_home"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_gallery"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/black"
+            android:contentDescription="Gallery"/>
+
+        <ImageButton
+            android:id="@+id/nav_fav"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/btn_star_big_off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/nav_home"
+            app:tint="@color/black"
+            android:contentDescription="Favorites"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/nav_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:src="@android:drawable/ic_input_add"
+            app:backgroundTint="@color/style_chocolate"
+            app:borderWidth="3dp"
+            app:elevation="4dp"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/black"
+            android:contentDescription="Add Outfit"/>
+
+        <ImageButton
+            android:id="@+id/nav_calendar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_today"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/nav_history"
+            app:tint="@color/black"
+            android:contentDescription="Albums"/>
+
+        <ImageButton
+            android:id="@+id/nav_history"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_recent_history"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/black"
+            android:contentDescription="History"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

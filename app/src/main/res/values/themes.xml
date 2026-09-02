@@ -1,0 +1,36 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Styleswipe" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/style_caramel</item>
+        <item name="colorPrimaryVariant">@color/style_chocolate</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/style_peach</item>
+        <item name="colorSecondaryVariant">@color/style_tan</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="alertDialogTheme">@style/CustomAlertDialogTheme</item>
+    </style>
+
+    <style name="CustomAlertDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">@drawable/dialog_bg</item>
+        <item name="colorPrimary">@color/style_dark_brown</item> <!-- for buttons -->
+        <item name="colorAccent">@color/style_chocolate</item> <!-- for buttons -->
+        <item name="android:textColor">@color/style_dark_brown</item>
+        <item name="android:textColorPrimary">@color/style_dark_brown</item>
+        <item name="android:fontFamily">@font/arena_rvwak</item>
+        <item name="buttonBarPositiveButtonStyle">@style/CustomDialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/CustomDialogButtonStyle</item>
+    </style>
+
+    <style name="CustomDialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/style_chocolate</item>
+        <item name="android:fontFamily">@font/arena_rvwak</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>
