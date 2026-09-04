@@ -12,9 +12,10 @@ public class model {
     private Bitmap imageBitmap;
     private String dateTaken;
     private int albumId;
+    private boolean isFavorite;
 
     public model(int id, String event, String location, String tags, String notes, 
-                 String imageUri, Bitmap imageBitmap, String dateTaken, int albumId) {
+                 String imageUri, Bitmap imageBitmap, String dateTaken, int albumId, boolean isFavorite) {
         this.id = id;
         this.event = event;
         this.location = location;
@@ -24,6 +25,7 @@ public class model {
         this.imageBitmap = imageBitmap;
         this.dateTaken = dateTaken;
         this.albumId = albumId;
+        this.isFavorite = isFavorite;
     }
 
     // Getters
@@ -36,4 +38,6 @@ public class model {
     public Bitmap getImageBitmap() { return imageBitmap; }
     public String getDateTaken() { return dateTaken; }
     public int getAlbumId() { return albumId; }
+    public boolean isFavorite() { return isFavorite; }
+    public void setFavorite(boolean favorite) { isFavorite = favorite; }
 }

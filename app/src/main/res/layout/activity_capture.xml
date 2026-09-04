@@ -8,10 +8,10 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav_custom"
-        app:layout_constraintTop_toTopOf="parent">
+        android:clipToPadding="false"
+        android:paddingBottom="130dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -201,11 +201,13 @@
 
         <ImageButton
             android:id="@+id/nav_home"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
             android:src="@android:drawable/ic_menu_gallery"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -214,11 +216,13 @@
 
         <ImageButton
             android:id="@+id/nav_fav"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginBottom="40dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
             android:src="@android:drawable/btn_star_big_off"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/nav_home"
@@ -227,14 +231,14 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/nav_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_marginBottom="16dp"
             android:src="@android:drawable/ic_input_add"
             app:backgroundTint="@color/style_chocolate"
             app:borderWidth="3dp"
             app:elevation="4dp"
-            app:fabSize="normal"
+            app:fabCustomSize="64dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -243,11 +247,13 @@
 
         <ImageButton
             android:id="@+id/nav_calendar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="40dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
             android:src="@android:drawable/ic_menu_today"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/nav_history"
@@ -256,11 +262,13 @@
 
         <ImageButton
             android:id="@+id/nav_history"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
             android:src="@android:drawable/ic_menu_recent_history"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

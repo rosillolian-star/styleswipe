@@ -4,19 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Background Stickers -->
-    <ImageView
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="-20dp"
-        android:src="@android:drawable/ic_menu_camera"
-        android:rotation="-10"
-        android:alpha="0.05"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:tint="@color/style_chocolate" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/albumsRecyclerView"
         android:layout_width="match_parent"
@@ -24,18 +11,5 @@
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addAlbumBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/style_caramel"
-        app:borderWidth="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/style_cream"
-        android:contentDescription="Add Album"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

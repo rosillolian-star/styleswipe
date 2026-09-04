@@ -5,30 +5,56 @@
     android:layout_height="match_parent"
     android:background="@color/style_cream">
 
-    <!-- Background Stickers -->
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="-20dp"
-        android:src="@android:drawable/btn_star_big_on"
-        android:rotation="15"
-        android:alpha="0.05"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/style_chocolate" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/picturesRecyclerView"
+        <!-- Dynamic Album/Category List -->
+        <HorizontalScrollView
+            android:id="@+id/albumScroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:scrollbars="none">
 
+            <LinearLayout
+                android:id="@+id/albumButtonContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="12dp" />
+        </HorizontalScrollView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/picturesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:clipToPadding="false"/>
+
+            <TextView
+                android:id="@+id/emptyGalleryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your style gallery is empty"
+                android:textColor="@color/style_brown"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.4" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

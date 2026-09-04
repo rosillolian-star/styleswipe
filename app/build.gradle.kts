@@ -50,4 +50,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    // AI & Machine Learning (Offline Clothes Detection)
+    implementation("com.google.mlkit:image-labeling:17.0.7")
 }

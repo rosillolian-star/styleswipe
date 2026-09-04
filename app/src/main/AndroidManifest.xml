@@ -28,10 +28,13 @@
         <activity android:name=".HomeActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
-        <activity android:name=".CaptureActivity" />
+        <activity
+            android:name=".CaptureActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".OutfitDetailActivity" />
         <activity android:name=".AlbumDetailActivity" />
         <activity android:name=".OutfitPickerActivity" />
+        <activity android:name=".OutfitSelectionActivity" />
 
     </application>
 </manifest>

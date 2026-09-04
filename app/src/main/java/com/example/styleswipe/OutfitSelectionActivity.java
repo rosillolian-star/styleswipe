@@ -21,43 +21,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * OUTFIT PICKER ACTIVITY
+ * OUTFIT SELECTION ACTIVITY
+ * Used by the Calendar/Planner to pick an outfit for a specific date.
  */
-public class OutfitPickerActivity extends AppCompatActivity {
+public class OutfitSelectionActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private PickerAdapter adapter;
     private List<model> outfitList = new ArrayList<>();
-    private int targetAlbumId;
+    private String targetDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_outfit_picker);
+        setContentView(R.layout.activity_outfit_selection);
 
-        targetAlbumId = getIntent().getIntExtra("ALBUM_ID", -1);
-        if (targetAlbumId == -1) {
+        targetDate = getIntent().getStringExtra("TARGET_DATE");
+        if (targetDate == null) {
             finish();
             return;
         }
 
         findViewById(R.id.backBtn).setOnClickListener(v -> finish());
 
-        recyclerView = findViewById(R.id.pickerRecyclerView);
+        recyclerView = findViewById(R.id.selectionRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
-        loadAllAvailableOutfits();
-        adapter = new PickerAdapter(outfitList);
-        recyclerView.setAdapter(adapter);
+        loadAllOutfits();
+        recyclerView.setAdapter(new SelectionAdapter(outfitList));
     }
 
-    private void loadAllAvailableOutfits() {
+    private void loadAllOutfits() {
         outfitList.clear();
         OutfitDatabaseHelper dbHelper = new OutfitDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        Cursor cursor = db.query("outfits", null, "album_id != ?", 
-                new String[]{String.valueOf(targetAlbumId)}, null, null, "date_taken DESC");
+        Cursor cursor = db.query("outfits", null, null, null, null, null, "date_taken DESC");
 
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
@@ -82,21 +80,25 @@ public class OutfitPickerActivity extends AppCompatActivity {
         db.close();
     }
 
-    private void addOutfitToAlbum(model outfit) {
+    private void planOutfit(model outfit) {
         OutfitDatabaseHelper dbHelper = new OutfitDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+
         ContentValues cv = new ContentValues();
-        cv.put("album_id", targetAlbumId);
-        
-        db.update("outfits", cv, "id = ?", new String[]{String.valueOf(outfit.getId())});
+        cv.put("outfit_id", outfit.getId());
+        cv.put("date", targetDate);
+
+        // Use CONFLICT_REPLACE to overwrite existing plan for the same date
+        db.insertWithOnConflict("planned_outfits", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
-        
+
+        setResult(RESULT_OK);
         finish();
     }
 
-    private class PickerAdapter extends RecyclerView.Adapter<PickerAdapter.ViewHolder> {
+    private class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.ViewHolder> {
         private List<model> items;
-        public PickerAdapter(List<model> items) { this.items = items; }
+        public SelectionAdapter(List<model> items) { this.items = items; }
 
         @NonNull
         @Override
@@ -113,8 +115,7 @@ public class OutfitPickerActivity extends AppCompatActivity {
             } else if (o.getImageBitmap() != null) {
                 holder.img.setImageBitmap(o.getImageBitmap());
             }
-            
-            holder.itemView.setOnClickListener(v -> addOutfitToAlbum(o));
+            holder.itemView.setOnClickListener(v -> planOutfit(o));
         }
 
         @Override

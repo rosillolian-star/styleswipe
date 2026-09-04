@@ -35,6 +35,19 @@
             app:tint="@color/style_dark_brown"
             android:contentDescription="Back"/>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/favBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/btn_star_big_off"
+            app:backgroundTint="@color/white"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="@id/detailImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/style_chocolate"
+            android:contentDescription="Favorite" />
+
         <LinearLayout
             android:id="@+id/textContainer"
             android:layout_width="match_parent"

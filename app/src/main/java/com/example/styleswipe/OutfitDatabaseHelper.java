@@ -7,61 +7,60 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * DATABASE HELPER CLASS
  * This class handles all local data storage using SQLite.
- * It manages the creation, updates, and schema of tables for Users, Albums, and Outfits.
  */
 public class OutfitDatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "outfits.db";
-    private static final int DB_VERSION = 4; // Incremented version to apply latest schema changes
+    private static final int DB_VERSION = 6; // Added planned_outfits table
 
     public OutfitDatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
-    /**
-     * TABLE CREATION
-     * This method runs once when the database is first created on the device.
-     */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // 1. USERS TABLE: Stores offline account credentials
+        // 1. USERS TABLE
         db.execSQL("CREATE TABLE users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "email TEXT UNIQUE," + // Unique constraint prevents duplicate registrations
+                "email TEXT UNIQUE," +
                 "password TEXT)");
 
-        // 2. ALBUMS TABLE: Manages style collections/folders
+        // 2. ALBUMS TABLE
         db.execSQL("CREATE TABLE albums (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL)");
 
-        // 3. OUTFITS TABLE: The main table storing all captured fashion data
+        // 3. OUTFITS TABLE
         db.execSQL("CREATE TABLE outfits (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "user_id INTEGER DEFAULT -1," + // Links outfit to a specific user
-                "event TEXT," +                 // Occasion name
-                "location TEXT," +              // Where it was worn
-                "tags TEXT," +                  // Categorization labels
-                "notes TEXT," +                 // Detailed description
-                "imageUri TEXT," +              // Path for gallery-picked images
-                "imageBitmap BLOB," +           // Binary data for camera-captured images
-                "date_taken DATETIME DEFAULT CURRENT_TIMESTAMP," + // Automatic timestamp
-                "album_id INTEGER DEFAULT -1)"); // Links outfit to an album
+                "user_id INTEGER DEFAULT -1," +
+                "event TEXT," +
+                "location TEXT," +
+                "tags TEXT," +
+                "notes TEXT," +
+                "imageUri TEXT," +
+                "imageBitmap BLOB," +
+                "date_taken DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                "album_id INTEGER DEFAULT -1," +
+                "is_favorite INTEGER DEFAULT 0)"); // 0 = false, 1 = true
+
+        // 4. PLANNED OUTFITS TABLE (Calendar)
+        db.execSQL("CREATE TABLE planned_outfits (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "outfit_id INTEGER," +
+                "date TEXT UNIQUE)"); // Store as YYYY-MM-DD
         
-        // 4. SEED DATA: Create a default "Recent" album so the app isn't empty
-        db.execSQL("INSERT INTO albums (name) VALUES ('Recent')");
+        // Default album
+        db.execSQL("INSERT INTO albums (name) VALUES ('History')");
     }
 
-    /**
-     * DATABASE UPDATES
-     * This method runs when DB_VERSION is increased. 
-     * It clears old tables and recreates them with the new structure.
-     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Simple strategy: reset the app data to apply new structure
-        db.execSQL("DROP TABLE IF EXISTS outfits");
-        db.execSQL("DROP TABLE IF EXISTS albums");
-        db.execSQL("DROP TABLE IF EXISTS users");
-        onCreate(db);
+        if (oldVersion < 6) {
+            db.execSQL("DROP TABLE IF EXISTS outfits");
+            db.execSQL("DROP TABLE IF EXISTS albums");
+            db.execSQL("DROP TABLE IF EXISTS users");
+            db.execSQL("DROP TABLE IF EXISTS planned_outfits");
+            onCreate(db);
+        }
     }
 }

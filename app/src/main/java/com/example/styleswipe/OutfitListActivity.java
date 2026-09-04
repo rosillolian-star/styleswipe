@@ -2,132 +2,140 @@ package com.example.styleswipe;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 /**
  * OUTFIT LIST ACTIVITY
- * Revamped activity matching the modern design.
- * Features a custom header, horizontal categories, and an arched bottom nav.
+ * Immersive style hub with tab-specific actions.
  */
 public class OutfitListActivity extends AppCompatActivity {
 
-    private TextView emptyPlaceholder;
+    private View navAdd, addAlbumBtn, searchBarCard;
+    private EditText gallerySearchInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outfit_list);
 
-        // Update greeting based on login status
-        TextView helloText = findViewById(R.id.helloText);
-        android.content.SharedPreferences prefs = getSharedPreferences("StyleSwipePrefs", android.content.Context.MODE_PRIVATE);
-        if (prefs.getInt("USER_ID", -1) == -1) {
-            helloText.setText("Hello, Guest");
-        }
-
-        // 1. UI INITIALIZATION
-        emptyPlaceholder = findViewById(R.id.emptyPlaceholder);
+        // UI INITIALIZATION
+        navAdd = findViewById(R.id.nav_add);
+        addAlbumBtn = findViewById(R.id.addAlbumBtn);
+        searchBarCard = findViewById(R.id.searchBarCard);
+        gallerySearchInput = findViewById(R.id.gallerySearchInput);
         
-        // 2. CUSTOM BOTTOM NAV CLICKS
-        findViewById(R.id.nav_home).setOnClickListener(v -> switchFragment(new PicturesFragment()));
-        findViewById(R.id.nav_fav).setOnClickListener(v -> {
-            // Placeholder for favorites
-        });
+        // 1. NAVIGATION ACTIONS
         
-        // MAIN ADD BUTTON (+)
-        FloatingActionButton addBtn = findViewById(R.id.nav_add);
-        addBtn.setOnClickListener(v -> {
+        // GALLERY -> Full style timeline
+        findViewById(R.id.nav_home).setOnClickListener(v -> 
+            switchFragment(new PicturesFragment(), true, true, true));
+        
+        // FAVORITES -> Only favorited items
+        findViewById(R.id.nav_fav).setOnClickListener(v -> 
+            switchFragment(PicturesFragment.newInstance(true), true, false, true));
+        
+        // ADD OUTFIT -> Open Capture
+        navAdd.setOnClickListener(v -> {
             startActivity(new Intent(this, CaptureActivity.class));
         });
 
-        findViewById(R.id.nav_calendar).setOnClickListener(v -> switchFragment(new AlbumsFragment()));
-        findViewById(R.id.nav_history).setOnClickListener(v -> {
-            // Placeholder for history
-        });
-
-        // 3. TOP SECTION INTERACTION
-        findViewById(R.id.searchSection).setOnClickListener(v -> showSearchDialog());
-        findViewById(R.id.filterBtn).setOnClickListener(v -> {
-            // Placeholder for filters
-        });
-
-        // 4. DEFAULT VIEW
-        if (savedInstanceState == null) {
-            if (getIntent().getBooleanExtra("OPEN_ALBUMS", false)) {
-                switchFragment(new AlbumsFragment());
-            } else {
-                switchFragment(new PicturesFragment());
-            }
-        }
+        // OUTFIT PLANNER -> Calendar view
+        findViewById(R.id.nav_calendar).setOnClickListener(v -> 
+            switchFragment(new PlannerFragment(), true, false, false));
         
-        // Check if there's any data to show
-        checkEmptyState();
+        // HISTORY (Albums)
+        findViewById(R.id.nav_history).setOnClickListener(v -> 
+            switchFragment(new AlbumsFragment(), true, false, false));
+
+        addAlbumBtn.setOnClickListener(v -> showAddAlbumDialog());
+
+        // 2. SEARCH LOGIC
+        gallerySearchInput.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterGallery(s.toString());
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        // 3. DEFAULT VIEW
+        if (savedInstanceState == null) {
+            switchFragment(new PicturesFragment(), true, true, true);
+        }
     }
 
     /**
-     * FRAGMENT SWITCHER
+     * FRAGMENT NAVIGATION
      */
-    private void switchFragment(Fragment fragment) {
+    private void switchFragment(Fragment fragment, boolean showAddOutfit, boolean showAddAlbum, boolean showSearch) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();
         
-        // Hide placeholder if a fragment is manually switched
-        emptyPlaceholder.setVisibility(View.GONE);
-    }
-
-    /**
-     * EMPTY STATE LOGIC
-     * Displays a message if no outfits are found in the database.
-     */
-    private void checkEmptyState() {
-        OutfitDatabaseHelper dbHelper = new OutfitDatabaseHelper(this);
-        android.database.sqlite.SQLiteDatabase db = dbHelper.getReadableDatabase();
-        android.database.Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM outfits", null);
-        cursor.moveToFirst();
-        int count = cursor.getInt(0);
-        cursor.close();
-        db.close();
-
-        if (count == 0) {
-            emptyPlaceholder.setVisibility(View.VISIBLE);
-        } else {
-            emptyPlaceholder.setVisibility(View.GONE);
+        navAdd.setVisibility(showAddOutfit ? View.VISIBLE : View.GONE);
+        addAlbumBtn.setVisibility(showAddAlbum ? View.VISIBLE : View.GONE);
+        searchBarCard.setVisibility(showSearch ? View.VISIBLE : View.GONE);
+        
+        if (gallerySearchInput != null) {
+            gallerySearchInput.setText("");
         }
     }
 
-    /**
-     * SEARCH INTERFACE
-     * Opens a themed pop-up dialog for filtering outfits.
-     */
-    private void showSearchDialog() {
+    private void filterGallery(String query) {
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (current instanceof PicturesFragment) {
+            ((PicturesFragment) current).filter(query);
+        }
+    }
+
+    private void showAddAlbumDialog() {
         android.widget.FrameLayout container = new android.widget.FrameLayout(this);
         android.widget.EditText input = new android.widget.EditText(this);
-        input.setHint("Search by event or location");
+        input.setHint("Album Name");
+        input.setTextColor(getResources().getColor(R.color.style_dark_brown));
         
         android.widget.FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(64, 16, 64, 16);
         input.setLayoutParams(params);
         container.addView(input);
-        
+
         new androidx.appcompat.app.AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
-                .setTitle("Search Outfits")
+                .setTitle("New Album")
+                .setMessage("Enter collection name:")
                 .setView(container)
-                .setPositiveButton("Search", (dialog, which) -> {
-                    String query = input.getText().toString();
-                    Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                    if (current instanceof PicturesFragment) {
-                        ((PicturesFragment) current).filter(query);
-                    }
+                .setPositiveButton("Create", (dialog, which) -> {
+                    String name = input.getText().toString();
+                    if (!name.isEmpty()) createAlbum(name);
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void createAlbum(String name) {
+        OutfitDatabaseHelper dbHelper = new OutfitDatabaseHelper(this);
+        android.database.sqlite.SQLiteDatabase db = dbHelper.getWritableDatabase();
+        android.content.ContentValues cv = new android.content.ContentValues();
+        cv.put("name", name);
+        db.insert("albums", null, cv);
+        db.close();
+        
+        // REFRESH CURRENT FRAGMENT
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (current instanceof AlbumsFragment) {
+            switchFragment(new AlbumsFragment(), true, false, false);
+        } else if (current instanceof PicturesFragment) {
+            ((PicturesFragment) current).refreshData();
+        }
+
+        Toast.makeText(this, "Album created: " + name, Toast.LENGTH_SHORT).show();
     }
 }

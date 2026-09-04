@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,24 +28,43 @@ import java.util.Map;
 
 /**
  * PICTURES FRAGMENT
- * Manages the "Pictures" tab view.
- * It fetches outfits from the DB, groups them by date, and displays them in a grid.
+ * Displays the style timeline and dynamic album categories.
  */
 public class PicturesFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private GalleryAdapter adapter;
-    private List<GalleryItem> galleryItems = new ArrayList<>(); // The current visible list
-    private List<GalleryItem> fullList = new ArrayList<>();     // Master list for reset/search
+    private List<GalleryItem> galleryItems = new ArrayList<>();
+    private List<GalleryItem> fullList = new ArrayList<>();
+    private LinearLayout albumButtonContainer;
+    private View emptyView;
+    private boolean favoritesOnly = false;
+
+    public static PicturesFragment newInstance(boolean favoritesOnly) {
+        PicturesFragment fragment = new PicturesFragment();
+        android.os.Bundle args = new android.os.Bundle();
+        args.putBoolean("favoritesOnly", favoritesOnly);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            favoritesOnly = getArguments().getBoolean("favoritesOnly");
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pictures, container, false);
-        recyclerView = view.findViewById(R.id.picturesRecyclerView);
         
-        // 1. GRID LAYOUT WITH SPAN LOOKUP
-        // We use a 3-column grid. Headers take up all 3 columns, while photos take only 1.
+        recyclerView = view.findViewById(R.id.picturesRecyclerView);
+        albumButtonContainer = view.findViewById(R.id.albumButtonContainer);
+        emptyView = view.findViewById(R.id.emptyGalleryText);
+        
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -53,32 +74,86 @@ public class PicturesFragment extends Fragment {
         });
         recyclerView.setLayoutManager(layoutManager);
         
-        // 2. DATA LOADING
-        loadPictures();
-        adapter = new GalleryAdapter(galleryItems);
-        recyclerView.setAdapter(adapter);
+        refreshData();
         
         return view;
     }
 
     /**
-     * FETCH & GROUP OUTFITS
-     * Loads outfits from database and organizes them by their capture date.
+     * REFRESH UI
+     * Reloads both the album category buttons and the photo timeline.
      */
+    public void refreshData() {
+        loadAlbums();
+        loadPictures();
+        
+        if (emptyView != null) {
+            emptyView.setVisibility(galleryItems.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+
+        if (adapter == null) {
+            adapter = new GalleryAdapter(galleryItems);
+            recyclerView.setAdapter(adapter);
+        } else {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void loadAlbums() {
+        if (albumButtonContainer == null) return;
+        albumButtonContainer.removeAllViews();
+
+        // 1. Add "All" Button
+        addAlbumButton("All", -1);
+
+        OutfitDatabaseHelper dbHelper = new OutfitDatabaseHelper(getContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("albums", null, null, null, null, null, "name ASC");
+
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            addAlbumButton(name, id);
+        }
+        cursor.close();
+        db.close();
+    }
+
+    private void addAlbumButton(String title, int albumId) {
+        Button btn = new Button(getContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, (int) (40 * getResources().getDisplayMetrics().density));
+        params.setMargins(0, 0, (int) (12 * getResources().getDisplayMetrics().density), 0);
+        btn.setLayoutParams(params);
+        
+        btn.setText(title);
+        btn.setAllCaps(false);
+        btn.setBackgroundResource(R.drawable.rounded_button);
+        btn.setTextColor(androidx.core.content.ContextCompat.getColor(getContext(), R.color.white));
+        
+        btn.setOnClickListener(v -> {
+            if (albumId == -1) {
+                filter(""); // Show all
+            } else {
+                filterByAlbum(albumId);
+            }
+        });
+        
+        albumButtonContainer.addView(btn);
+    }
+
     private void loadPictures() {
         galleryItems.clear();
         OutfitDatabaseHelper dbHelper = new OutfitDatabaseHelper(getContext());
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Retrieve all outfits, most recent first
-        Cursor cursor = db.query("outfits",
-                null, null, null, null, null, "date_taken DESC");
+        String selection = favoritesOnly ? "is_favorite = 1" : null;
 
-        // Temporary map to group items by date string
+        Cursor cursor = db.query("outfits", null, selection, null, null, null, "date_taken DESC");
+
         Map<String, List<model>> grouped = new LinkedHashMap<>();
 
         while (cursor.moveToNext()) {
-            // Extract all database fields
             int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
             String event = cursor.getString(cursor.getColumnIndexOrThrow("event"));
             String location = cursor.getString(cursor.getColumnIndexOrThrow("location"));
@@ -88,16 +163,15 @@ public class PicturesFragment extends Fragment {
             byte[] imageBytes = cursor.getBlob(cursor.getColumnIndexOrThrow("imageBitmap"));
             String dateTaken = cursor.getString(cursor.getColumnIndexOrThrow("date_taken"));
             int albumId = cursor.getInt(cursor.getColumnIndexOrThrow("album_id"));
+            int isFav = cursor.getInt(cursor.getColumnIndexOrThrow("is_favorite"));
 
-            // Decode image if it's stored as bytes
             Bitmap bitmap = null;
             if (imageBytes != null) {
                 bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
             }
 
-            model outfit = new model(id, event, location, tags, notes, imageUri, bitmap, dateTaken, albumId);
+            model outfit = new model(id, event, location, tags, notes, imageUri, bitmap, dateTaken, albumId, isFav == 1);
             
-            // Format the raw DB timestamp into a readable grouping key (e.g. "Today")
             String dateKey = formatHeaderDate(dateTaken);
             if (!grouped.containsKey(dateKey)) {
                 grouped.put(dateKey, new ArrayList<>());
@@ -107,68 +181,62 @@ public class PicturesFragment extends Fragment {
         cursor.close();
         db.close();
 
-        // 3. FLATTEN DATA FOR ADAPTER
-        // Convert the group map into a simple list containing both Headers and Pictures.
         for (String date : grouped.keySet()) {
-            galleryItems.add(new GalleryItem(date)); // Insert Date Header
+            galleryItems.add(new GalleryItem(date));
             for (model outfit : grouped.get(date)) {
-                galleryItems.add(new GalleryItem(outfit)); // Insert Outfit Photo
+                galleryItems.add(new GalleryItem(outfit));
             }
         }
-        // Cache the master list for searching
         fullList = new ArrayList<>(galleryItems);
     }
 
-    /**
-     * SEARCH FILTER
-     * Filters the gallery based on the search query.
-     */
     public void filter(String query) {
-        if (query.isEmpty()) {
-            // Reset to full list if search is cleared
+        if (query == null || query.isEmpty()) {
             galleryItems.clear();
             galleryItems.addAll(fullList);
         } else {
             List<GalleryItem> filtered = new ArrayList<>();
             for (GalleryItem item : fullList) {
-                if (item.isHeader) continue; // Ignore headers in search results
-                
-                // Match against event or location
-                if ((item.outfit.getEvent() != null && item.outfit.getEvent().toLowerCase().contains(query.toLowerCase())) ||
-                    (item.outfit.getLocation() != null && item.outfit.getLocation().toLowerCase().contains(query.toLowerCase()))) {
+                if (item.isHeader) continue;
+                String content = (item.outfit.getEvent() + " " + item.outfit.getLocation() + " " + item.outfit.getTags()).toLowerCase();
+                if (content.contains(query.toLowerCase())) {
                     filtered.add(item);
                 }
             }
             galleryItems.clear();
             galleryItems.addAll(filtered);
         }
-        adapter.notifyDataSetChanged();
+        if (adapter != null) adapter.notifyDataSetChanged();
     }
 
-    /**
-     * DATE FORMATTER
-     * Converts a database timestamp into a user-friendly relative string.
-     */
+    private void filterByAlbum(int albumId) {
+        List<GalleryItem> filtered = new ArrayList<>();
+        for (GalleryItem item : fullList) {
+            if (item.isHeader) continue;
+            if (item.outfit.getAlbumId() == albumId) {
+                filtered.add(item);
+            }
+        }
+        galleryItems.clear();
+        galleryItems.addAll(filtered);
+        if (adapter != null) adapter.notifyDataSetChanged();
+    }
+
     private String formatHeaderDate(String rawDate) {
         if (rawDate == null) return "Unknown Date";
         try {
-            // SQLite default format is yyyy-MM-dd HH:mm:ss
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             Date date = sdf.parse(rawDate);
-            
             Calendar cal = Calendar.getInstance();
             Date today = cal.getTime();
             cal.add(Calendar.DAY_OF_YEAR, -1);
             Date yesterday = cal.getTime();
-
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             if (fmt.format(date).equals(fmt.format(today))) return "Today";
             if (fmt.format(date).equals(fmt.format(yesterday))) return "Yesterday";
-
-            // Otherwise show a standard date format
             return new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(date);
         } catch (Exception e) {
-            return rawDate; // Fallback to raw text on error
+            return rawDate;
         }
     }
 }
